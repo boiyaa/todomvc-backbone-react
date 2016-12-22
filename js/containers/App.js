@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import View from '../views/App';
 import {todos} from '../collections/todos';
+import {ActionCreators} from '../actions/todo';
 
 class App extends Component {
 
@@ -31,7 +32,7 @@ class App extends Component {
     // Suppresses 'add' events with {reset: true} and prevents the app view
     // from being re-rendered for every model. Only renders when the 'reset'
     // event is triggered at the end of the fetch.
-    todos.fetch({reset: true});
+    ActionCreators.fetchTodos();
   }
 
   componentWillUnmount() {
@@ -78,24 +79,15 @@ class App extends Component {
     todos.each(this.filterOne, this);
   }
 
-  // Generate the attributes for a new Todo item.
-  newAttributes() {
-    return {title: this.state.value.trim(), order: todos.nextOrder(), completed: false};
-  }
-
   // If you hit return in the main input field, create new **Todo** model,
   // persisting it to *localStorage*.
   createOnEnter() {
-    todos.create(this.newAttributes());
+    ActionCreators.addTodo(this.state.value);
     this.setState({value: ''});
   }
 
   toggleAllComplete() {
-    const checked = todos.remaining().length === 0;
-
-    todos.each((todo) => {
-      todo.save({completed: !checked});
-    });
+    ActionCreators.toggleAllTodos();
   }
 
 }

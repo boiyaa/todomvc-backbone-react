@@ -21492,6 +21492,8 @@
 
 	var _todos = __webpack_require__(186);
 
+	var _todo = __webpack_require__(189);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21542,7 +21544,7 @@
 	      // Suppresses 'add' events with {reset: true} and prevents the app view
 	      // from being re-rendered for every model. Only renders when the 'reset'
 	      // event is triggered at the end of the fetch.
-	      _todos.todos.fetch({ reset: true });
+	      _todo.ActionCreators.fetchTodos();
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -21605,31 +21607,19 @@
 	      _todos.todos.each(this.filterOne, this);
 	    }
 
-	    // Generate the attributes for a new Todo item.
-
-	  }, {
-	    key: 'newAttributes',
-	    value: function newAttributes() {
-	      return { title: this.state.value.trim(), order: _todos.todos.nextOrder(), completed: false };
-	    }
-
 	    // If you hit return in the main input field, create new **Todo** model,
 	    // persisting it to *localStorage*.
 
 	  }, {
 	    key: 'createOnEnter',
 	    value: function createOnEnter() {
-	      _todos.todos.create(this.newAttributes());
+	      _todo.ActionCreators.addTodo(this.state.value);
 	      this.setState({ value: '' });
 	    }
 	  }, {
 	    key: 'toggleAllComplete',
 	    value: function toggleAllComplete() {
-	      var checked = _todos.todos.remaining().length === 0;
-
-	      _todos.todos.each(function (todo) {
-	        todo.save({ completed: !checked });
-	      });
+	      _todo.ActionCreators.toggleAllTodos();
 	    }
 	  }]);
 
@@ -21656,11 +21646,11 @@
 
 	var _Stats2 = _interopRequireDefault(_Stats);
 
-	var _Todo = __webpack_require__(189);
+	var _Todo = __webpack_require__(191);
 
 	var _Todo2 = _interopRequireDefault(_Todo);
 
-	var _keys = __webpack_require__(191);
+	var _keys = __webpack_require__(193);
 
 	var keys = _interopRequireWildcard(_keys);
 
@@ -21774,6 +21764,8 @@
 
 	var _router = __webpack_require__(182);
 
+	var _todo = __webpack_require__(189);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21800,9 +21792,7 @@
 	  _createClass(Stats, [{
 	    key: 'clearCompleted',
 	    value: function clearCompleted() {
-	      this.props.todos.completed().forEach(function (todo) {
-	        return todo.destroy();
-	      });
+	      _todo.ActionCreators.deleteCompletedTodos();
 	    }
 	  }, {
 	    key: 'render',
@@ -35281,6 +35271,10 @@
 
 	var _todo2 = _interopRequireDefault(_todo);
 
+	var _todo3 = __webpack_require__(189);
+
+	var _Dispatcher = __webpack_require__(190);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// Todo Collection
@@ -35294,6 +35288,44 @@
 
 		// Save all of the todo items under this example's namespace.
 		localStorage: new _backbone2.default.LocalStorage('todos-backbone'),
+
+		constructor: function constructor() {
+			_backbone2.default.Collection.apply(this, arguments);
+
+			this.on(_todo3.ActionTypes.ADD_TODO, function (action) {
+				this.create({ title: action.text.trim(), order: this.nextOrder(), completed: false });
+			});
+
+			this.on(_todo3.ActionTypes.DELETE_COMPLETED_TODOS, function (action) {
+				this.completed().forEach(function (todo) {
+					todo.destroy();
+				});
+			});
+
+			this.on(_todo3.ActionTypes.DELETE_TODO, function (action) {
+				this.get(action.cid).destroy();
+			});
+
+			this.on(_todo3.ActionTypes.EDIT_TODO, function (action) {
+				this.get(action.cid).save({ title: action.text });
+			});
+
+			this.on(_todo3.ActionTypes.FETCH_TODOS, function (action) {
+				this.fetch({ reset: true });
+			});
+
+			this.on(_todo3.ActionTypes.TOGGLE_ALL_TODOS, function (action) {
+				var checked = this.remaining().length === 0;
+
+				this.each(function (todo) {
+					todo.save({ completed: !checked });
+				});
+			});
+
+			this.on(_todo3.ActionTypes.TOGGLE_TODO, function (action) {
+				this.get(action.cid).toggle();
+			});
+		},
 
 		// Filter down the list of all todo items that are finished.
 		completed: function completed() {
@@ -35317,6 +35349,8 @@
 
 	// Create our global collection of **Todos**.
 	var todos = exports.todos = new Todos();
+
+	_Dispatcher.dispatcher.register(todos);
 
 /***/ },
 /* 187 */
@@ -35629,6 +35663,115 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.ActionCreators = exports.ActionTypes = undefined;
+
+	var _Dispatcher = __webpack_require__(190);
+
+	var ActionTypes = exports.ActionTypes = {
+	  FETCH_TODOS: 'FETCH_TODOS',
+	  ADD_TODO: 'ADD_TODO',
+	  DELETE_COMPLETED_TODOS: 'DELETE_COMPLETED_TODOS',
+	  DELETE_TODO: 'DELETE_TODO',
+	  EDIT_TODO: 'EDIT_TODO',
+	  START_EDITING_TODO: 'START_EDITING_TODO',
+	  STOP_EDITING_TODO: 'STOP_EDITING_TODO',
+	  TOGGLE_ALL_TODOS: 'TOGGLE_ALL_TODOS',
+	  TOGGLE_TODO: 'TOGGLE_TODO',
+	  UPDATE_DRAFT: 'UPDATE_DRAFT'
+	};
+
+	var ActionCreators = exports.ActionCreators = {
+	  fetchTodos: function fetchTodos() {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.FETCH_TODOS
+	    });
+	  },
+	  addTodo: function addTodo(text) {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.ADD_TODO,
+	      text: text
+	    });
+	  },
+	  deleteCompletedTodos: function deleteCompletedTodos() {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.DELETE_COMPLETED_TODOS
+	    });
+	  },
+	  deleteTodo: function deleteTodo(cid) {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.DELETE_TODO,
+	      cid: cid
+	    });
+	  },
+	  editTodo: function editTodo(cid, text) {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.EDIT_TODO,
+	      cid: cid,
+	      text: text
+	    });
+	  },
+	  toggleAllTodos: function toggleAllTodos() {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.TOGGLE_ALL_TODOS
+	    });
+	  },
+	  toggleTodo: function toggleTodo(cid) {
+	    _Dispatcher.dispatcher.dispatch({
+	      type: ActionTypes.TOGGLE_TODO,
+	      cid: cid
+	    });
+	  }
+	};
+
+/***/ },
+/* 190 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Dispatcher = function () {
+	  function Dispatcher() {
+	    _classCallCheck(this, Dispatcher);
+
+	    this.stores = [];
+	  }
+
+	  _createClass(Dispatcher, [{
+	    key: "register",
+	    value: function register(store) {
+	      this.stores.push(store);
+	    }
+	  }, {
+	    key: "dispatch",
+	    value: function dispatch(action) {
+	      this.stores.forEach(function (store) {
+	        return store.trigger(action.type, action);
+	      });
+	    }
+	  }]);
+
+	  return Dispatcher;
+	}();
+
+	var dispatcher = exports.dispatcher = new Dispatcher();
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -35636,15 +35779,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Todo = __webpack_require__(190);
+	var _Todo = __webpack_require__(192);
 
 	var _Todo2 = _interopRequireDefault(_Todo);
 
 	var _router = __webpack_require__(182);
 
-	var _keys = __webpack_require__(191);
+	var _keys = __webpack_require__(193);
 
 	var keys = _interopRequireWildcard(_keys);
+
+	var _todo = __webpack_require__(189);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -35739,7 +35884,7 @@
 	  }, {
 	    key: 'toggleCompleted',
 	    value: function toggleCompleted() {
-	      this.props.model.toggle();
+	      _todo.ActionCreators.toggleTodo(this.props.model.cid);
 	    }
 
 	    // Switch this view into `"editing"` mode, displaying the input field.
@@ -35764,9 +35909,9 @@
 	      }
 
 	      if (this.state.value.trim()) {
-	        this.props.model.save({ title: this.state.value.trim() });
+	        _todo.ActionCreators.editTodo(this.props.model.cid, this.state.value.trim());
 	      } else {
-	        this.clear();
+	        _todo.ActionCreators.deleteTodo(this.props.model.cid);
 	      }
 
 	      this.setState({ isEditing: false });
@@ -35797,7 +35942,7 @@
 	  }, {
 	    key: 'clear',
 	    value: function clear() {
-	      this.props.model.destroy();
+	      _todo.ActionCreators.deleteTodo(this.props.model.cid);
 	    }
 	  }]);
 
@@ -35807,7 +35952,7 @@
 	exports.default = Todo;
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35820,7 +35965,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _keys = __webpack_require__(191);
+	var _keys = __webpack_require__(193);
 
 	var keys = _interopRequireWildcard(_keys);
 
@@ -35922,7 +36067,7 @@
 	exports.default = Todo;
 
 /***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports) {
 
 	"use strict";

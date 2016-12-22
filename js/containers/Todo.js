@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import View from '../views/Todo';
 import {TodoFilter} from '../routers/router';
 import * as keys from '../constants/keys';
+import {ActionCreators} from '../actions/todo';
 
 class Todo extends Component {
 
@@ -61,7 +62,7 @@ class Todo extends Component {
 
   // Toggle the `"completed"` state of the model.
   toggleCompleted() {
-    this.props.model.toggle();
+    ActionCreators.toggleTodo(this.props.model.cid);
   }
 
   // Switch this view into `"editing"` mode, displaying the input field.
@@ -80,9 +81,9 @@ class Todo extends Component {
     }
 
     if (this.state.value.trim()) {
-      this.props.model.save({title: this.state.value.trim()});
+      ActionCreators.editTodo(this.props.model.cid, this.state.value.trim());
     } else {
-      this.clear();
+      ActionCreators.deleteTodo(this.props.model.cid);
     }
 
     this.setState({isEditing: false});
@@ -104,7 +105,7 @@ class Todo extends Component {
 
   // Remove the item, destroy the model from *localStorage* and delete its view.
   clear() {
-    this.props.model.destroy();
+    ActionCreators.deleteTodo(this.props.model.cid);
   }
 
 }

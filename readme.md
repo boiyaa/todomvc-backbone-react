@@ -1,4 +1,4 @@
-# Backbone.js + React TodoMVC Example Part4
+# Backbone.js + React TodoMVC Example Part5
 
 Replace Backbone Views with React Components
-Separate components by role
+Practice Flux on Backbone

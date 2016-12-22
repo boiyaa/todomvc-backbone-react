@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import View from '../views/Stats';
 import {TodoFilter} from '../routers/router';
+import {ActionCreators} from '../actions/todo';
 
 class Stats extends Component {
 
@@ -11,7 +12,7 @@ class Stats extends Component {
 
   // Clear all completed todo items, destroying their models.
   clearCompleted() {
-    this.props.todos.completed().forEach((todo) => todo.destroy());
+    ActionCreators.deleteCompletedTodos();
   }
 
   render() {
