@@ -1,5 +1,4 @@
 /*global Backbone, jQuery, _, ENTER_KEY, ESC_KEY */
-var app = app || {};
 
 (function ($) {
 	'use strict';
@@ -46,7 +45,7 @@ var app = app || {};
 			}
 
 			ReactDOM.render(
-				React.createElement(Item, this.model.toJSON(), null),
+				<Item title={this.model.get('title')} checked={this.model.get('completed')} />,
 				this.$el.get(0)
 			);
 

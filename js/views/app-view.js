@@ -1,5 +1,4 @@
 /*global Backbone, jQuery, _, ENTER_KEY */
-var app = app || {};
 
 (function ($) {
 	'use strict';
@@ -54,10 +53,10 @@ var app = app || {};
 				this.$footer.show();
 
 				ReactDOM.render(
-					React.createElement(Stats, {
-						completed: completed,
-						remaining: remaining
-					}, null),
+					<Stats
+						completed={completed}
+						remaining={remaining}
+					/>,
 					this.$footer.get(0)
 				);
 
