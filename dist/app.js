@@ -21486,21 +21486,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Stats = __webpack_require__(179);
+	var _App = __webpack_require__(179);
 
-	var _Stats2 = _interopRequireDefault(_Stats);
+	var _App2 = _interopRequireDefault(_App);
 
-	var _Todo = __webpack_require__(187);
-
-	var _Todo2 = _interopRequireDefault(_Todo);
-
-	var _todos = __webpack_require__(184);
-
-	var _keys = __webpack_require__(188);
-
-	var keys = _interopRequireWildcard(_keys);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _todos = __webpack_require__(186);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21575,65 +21565,16 @@
 	      var checked = _todos.todos.remaining().length === 0;
 
 	      // Delegated events for creating new items, and clearing completed ones.
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'header',
-	          { className: 'header' },
-	          _react2.default.createElement(
-	            'h1',
-	            null,
-	            'todos'
-	          ),
-	          _react2.default.createElement('input', {
-	            className: 'new-todo',
-	            placeholder: 'What needs to be done?',
-	            autoFocus: true,
-	            value: this.state.value,
-	            onChange: function onChange(e) {
-	              return _this4.setState({ value: e.target.value });
-	            },
-	            onKeyPress: this.createOnEnter
-	          })
-	        ),
-	        function () {
-	          if (_todos.todos.length > 0) {
-	            return _react2.default.createElement(
-	              'div',
-	              null,
-	              _react2.default.createElement(
-	                'section',
-	                { className: 'main' },
-	                _react2.default.createElement('input', {
-	                  className: 'toggle-all',
-	                  id: 'toggle-all',
-	                  type: 'checkbox',
-	                  checked: checked,
-	                  onChange: _this4.toggleAllComplete
-	                }),
-	                _react2.default.createElement(
-	                  'label',
-	                  { htmlFor: 'toggle-all' },
-	                  'Mark all as complete'
-	                ),
-	                _react2.default.createElement(
-	                  'ul',
-	                  { className: 'todo-list' },
-	                  _todos.todos.map(function (todo) {
-	                    return _react2.default.createElement(_Todo2.default, { key: todo.cid, model: todo });
-	                  })
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'footer',
-	                { className: 'footer' },
-	                _react2.default.createElement(_Stats2.default, { todos: _todos.todos })
-	              )
-	            );
-	          }
-	        }()
-	      );
+	      return _react2.default.createElement(_App2.default, {
+	        todos: _todos.todos,
+	        value: this.state.value,
+	        checked: checked,
+	        onNewTodoChange: function onNewTodoChange(value) {
+	          return _this4.setState({ value: value });
+	        },
+	        onNewTodoKeyPressEnter: this.createOnEnter,
+	        onToggleAllChange: this.toggleAllComplete
+	      });
 	    }
 
 	    // Add a single todo item to the list by creating a view for it, and
@@ -21677,11 +21618,9 @@
 
 	  }, {
 	    key: 'createOnEnter',
-	    value: function createOnEnter(e) {
-	      if (e.which === keys.ENTER_KEY && this.state.value.trim()) {
-	        _todos.todos.create(this.newAttributes());
-	        this.setState({ value: '' });
-	      }
+	    value: function createOnEnter() {
+	      _todos.todos.create(this.newAttributes());
+	      this.setState({ value: '' });
 	    }
 	  }, {
 	    key: 'toggleAllComplete',
@@ -21709,13 +21648,131 @@
 	  value: true
 	});
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Stats = __webpack_require__(180);
+
+	var _Stats2 = _interopRequireDefault(_Stats);
+
+	var _Todo = __webpack_require__(189);
+
+	var _Todo2 = _interopRequireDefault(_Todo);
+
+	var _keys = __webpack_require__(191);
+
+	var keys = _interopRequireWildcard(_keys);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var App = function App(props) {
+	  var todos = props.todos,
+	      value = props.value,
+	      checked = props.checked,
+	      onNewTodoChange = props.onNewTodoChange,
+	      onNewTodoKeyPressEnter = props.onNewTodoKeyPressEnter,
+	      onToggleAllChange = props.onToggleAllChange;
+
+
+	  var handleNewTodoChange = function handleNewTodoChange(event) {
+	    return onNewTodoChange(event.target.value);
+	  };
+
+	  var handleNewTodoKeyPress = function handleNewTodoKeyPress(event) {
+	    if (event.which === keys.ENTER_KEY) {
+	      onNewTodoKeyPressEnter();
+	    }
+	  };
+
+	  var handleToggleAllChange = function handleToggleAllChange() {
+	    return onToggleAllChange();
+	  };
+
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'header',
+	      { className: 'header' },
+	      _react2.default.createElement(
+	        'h1',
+	        null,
+	        'todos'
+	      ),
+	      _react2.default.createElement('input', {
+	        className: 'new-todo',
+	        placeholder: 'What needs to be done?',
+	        autoFocus: true,
+	        value: value,
+	        onChange: handleNewTodoChange,
+	        onKeyPress: handleNewTodoKeyPress
+	      })
+	    ),
+	    function () {
+	      if (todos.length > 0) {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          _react2.default.createElement(
+	            'section',
+	            { className: 'main' },
+	            _react2.default.createElement('input', {
+	              className: 'toggle-all',
+	              id: 'toggle-all',
+	              type: 'checkbox',
+	              checked: checked,
+	              onChange: handleToggleAllChange
+	            }),
+	            _react2.default.createElement(
+	              'label',
+	              { htmlFor: 'toggle-all' },
+	              'Mark all as complete'
+	            ),
+	            _react2.default.createElement(
+	              'ul',
+	              { className: 'todo-list' },
+	              todos.map(function (todo) {
+	                return _react2.default.createElement(_Todo2.default, { key: todo.cid, model: todo });
+	              })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'footer',
+	            { className: 'footer' },
+	            _react2.default.createElement(_Stats2.default, { todos: todos })
+	          )
+	        );
+	      }
+	    }()
+	  );
+	};
+
+	exports.default = App;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _router = __webpack_require__(180);
+	var _Stats = __webpack_require__(181);
+
+	var _Stats2 = _interopRequireDefault(_Stats);
+
+	var _router = __webpack_require__(182);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21750,73 +21807,15 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-
-	      var completed = this.props.todos.completed().length;
+	      var completed = this.props.todos.completed().length > 0;
 	      var remaining = this.props.todos.remaining().length;
-	      var classNameAll = !_router.TodoFilter ? 'selected' : '';
-	      var classNameActive = _router.TodoFilter === 'active' ? 'selected' : '';
-	      var classNameCompleted = _router.TodoFilter === 'completed' ? 'selected' : '';
 
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'span',
-	          { className: 'todo-count' },
-	          _react2.default.createElement(
-	            'strong',
-	            null,
-	            remaining
-	          ),
-	          ' ',
-	          remaining === 1 ? 'item' : 'items',
-	          ' left'
-	        ),
-	        _react2.default.createElement(
-	          'ul',
-	          { className: 'filters' },
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { className: classNameAll, href: '#/' },
-	              'All'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { className: classNameActive, href: '#/active' },
-	              'Active'
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            _react2.default.createElement(
-	              'a',
-	              { className: classNameCompleted, href: '#/completed' },
-	              'Completed'
-	            )
-	          )
-	        ),
-	        function () {
-	          if (completed) {
-	            return _react2.default.createElement(
-	              'button',
-	              {
-	                className: 'clear-completed',
-	                onClick: _this2.clearCompleted
-	              },
-	              'Clear completed'
-	            );
-	          }
-	        }()
-	      );
+	      return _react2.default.createElement(_Stats2.default, {
+	        completed: completed,
+	        remaining: remaining,
+	        filter: _router.TodoFilter,
+	        onClearCompletedClick: this.clearCompleted
+	      });
 	    }
 	  }]);
 
@@ -21826,7 +21825,101 @@
 	exports.default = Stats;
 
 /***/ },
-/* 180 */
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Stats = function Stats(props) {
+	  var completed = props.completed,
+	      remaining = props.remaining,
+	      filter = props.filter,
+	      onClearCompletedClick = props.onClearCompletedClick;
+
+
+	  var handleClearCompletedClick = function handleClearCompletedClick() {
+	    return onClearCompletedClick();
+	  };
+
+	  var classNameAll = !filter ? 'selected' : '';
+	  var classNameActive = filter === 'active' ? 'selected' : '';
+	  var classNameCompleted = filter === 'completed' ? 'selected' : '';
+
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'span',
+	      { className: 'todo-count' },
+	      _react2.default.createElement(
+	        'strong',
+	        null,
+	        remaining
+	      ),
+	      ' ',
+	      remaining === 1 ? 'item' : 'items',
+	      ' left'
+	    ),
+	    _react2.default.createElement(
+	      'ul',
+	      { className: 'filters' },
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'a',
+	          { className: classNameAll, href: '#/' },
+	          'All'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'a',
+	          { className: classNameActive, href: '#/active' },
+	          'Active'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(
+	          'a',
+	          { className: classNameCompleted, href: '#/completed' },
+	          'Completed'
+	        )
+	      )
+	    ),
+	    function () {
+	      if (completed) {
+	        return _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'clear-completed',
+	            onClick: handleClearCompletedClick
+	          },
+	          'Clear completed'
+	        );
+	      }
+	    }()
+	  );
+	};
+
+	exports.default = Stats;
+
+/***/ },
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21836,11 +21929,11 @@
 	});
 	exports.todoRouter = exports.TodoFilter = undefined;
 
-	var _backbone = __webpack_require__(181);
+	var _backbone = __webpack_require__(183);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	var _todos = __webpack_require__(184);
+	var _todos = __webpack_require__(186);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21867,7 +21960,7 @@
 	_backbone2.default.history.start();
 
 /***/ },
-/* 181 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
@@ -21886,7 +21979,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(182), __webpack_require__(183), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(184), __webpack_require__(185), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -23794,7 +23887,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 182 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -25348,7 +25441,7 @@
 
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -35168,7 +35261,7 @@
 
 
 /***/ },
-/* 184 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35178,13 +35271,13 @@
 	});
 	exports.todos = undefined;
 
-	var _backbone = __webpack_require__(181);
+	var _backbone = __webpack_require__(183);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	__webpack_require__(185);
+	__webpack_require__(187);
 
-	var _todo = __webpack_require__(186);
+	var _todo = __webpack_require__(188);
 
 	var _todo2 = _interopRequireDefault(_todo);
 
@@ -35226,7 +35319,7 @@
 	var todos = exports.todos = new Todos();
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35237,7 +35330,7 @@
 	 */
 	(function (root, factory) {
 	  if (true) {
-	    module.exports = factory(__webpack_require__(181));
+	    module.exports = factory(__webpack_require__(183));
 	  } else if (typeof define === "function" && define.amd) {
 	    // AMD. Register as an anonymous module.
 	    define(["backbone"], function(Backbone) {
@@ -35490,7 +35583,7 @@
 
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35499,7 +35592,7 @@
 		value: true
 	});
 
-	var _backbone = __webpack_require__(181);
+	var _backbone = __webpack_require__(183);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -35528,7 +35621,7 @@
 	exports.default = Todo;
 
 /***/ },
-/* 187 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35543,9 +35636,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _router = __webpack_require__(180);
+	var _Todo = __webpack_require__(190);
 
-	var _keys = __webpack_require__(188);
+	var _Todo2 = _interopRequireDefault(_Todo);
+
+	var _router = __webpack_require__(182);
+
+	var _keys = __webpack_require__(191);
 
 	var keys = _interopRequireWildcard(_keys);
 
@@ -35613,57 +35710,23 @@
 	    value: function render() {
 	      var _this4 = this;
 
-	      var title = this.props.model.get('title');
-	      var completed = this.props.model.get('completed');
-
-	      var classNames = [];
-	      if (completed) {
-	        classNames.push('completed');
-	      }
-	      if (completed && _router.TodoFilter === 'active' || !completed && _router.TodoFilter === 'completed') {
-	        classNames.push('hidden');
-	      }
-	      if (this.state.isEditing) {
-	        classNames.push('editing');
-	      }
-	      var className = classNames.join(' ');
-
 	      // The DOM events specific to an item.
-	      return _react2.default.createElement(
-	        'li',
-	        { className: className },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'view' },
-	          _react2.default.createElement('input', {
-	            className: 'toggle',
-	            type: 'checkbox',
-	            checked: completed,
-	            onChange: this.toggleCompleted
-	          }),
-	          _react2.default.createElement(
-	            'label',
-	            { onDoubleClick: this.edit },
-	            title
-	          ),
-	          _react2.default.createElement('button', { className: 'destroy', onClick: this.clear })
-	        ),
-	        function () {
-	          if (_this4.state.isEditing) {
-	            return _react2.default.createElement('input', {
-	              className: 'edit',
-	              autoFocus: true,
-	              value: _this4.state.value,
-	              onChange: function onChange(e) {
-	                return _this4.setState({ value: e.target.value });
-	              },
-	              onKeyPress: _this4.updateOnEnter,
-	              onKeyDown: _this4.revertOnEscape,
-	              onBlur: _this4.close
-	            });
-	          }
-	        }()
-	      );
+	      return _react2.default.createElement(_Todo2.default, {
+	        title: this.props.model.get('title'),
+	        completed: this.props.model.get('completed'),
+	        filter: _router.TodoFilter,
+	        isEditing: this.state.isEditing,
+	        value: this.state.value,
+	        onToggleChange: this.toggleCompleted,
+	        onLabelDoubleClick: this.edit,
+	        onDestroyClick: this.clear,
+	        onEditChange: function onEditChange(value) {
+	          return _this4.setState({ value: value });
+	        },
+	        onEditBlur: this.close,
+	        onEditKeyPressEnter: this.updateOnEnter,
+	        onEditKeyDownEsc: this.revertOnEscape
+	      });
 	    }
 	  }, {
 	    key: 'toggleVisible',
@@ -35713,10 +35776,8 @@
 
 	  }, {
 	    key: 'updateOnEnter',
-	    value: function updateOnEnter(e) {
-	      if (e.which === keys.ENTER_KEY) {
-	        this.close();
-	      }
+	    value: function updateOnEnter() {
+	      this.close();
 	    }
 
 	    // If you're pressing `escape` we revert your change by simply leaving
@@ -35724,13 +35785,11 @@
 
 	  }, {
 	    key: 'revertOnEscape',
-	    value: function revertOnEscape(e) {
-	      if (e.which === keys.ESC_KEY) {
-	        this.setState({
-	          isEditing: false,
-	          value: this.props.model.get('title')
-	        });
-	      }
+	    value: function revertOnEscape() {
+	      this.setState({
+	        isEditing: false,
+	        value: this.props.model.get('title')
+	      });
 	    }
 
 	    // Remove the item, destroy the model from *localStorage* and delete its view.
@@ -35748,7 +35807,122 @@
 	exports.default = Todo;
 
 /***/ },
-/* 188 */
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _keys = __webpack_require__(191);
+
+	var keys = _interopRequireWildcard(_keys);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Todo = function Todo(props) {
+	  var title = props.title,
+	      completed = props.completed,
+	      filter = props.filter,
+	      isEditing = props.isEditing,
+	      value = props.value,
+	      onToggleChange = props.onToggleChange,
+	      onLabelDoubleClick = props.onLabelDoubleClick,
+	      onDestroyClick = props.onDestroyClick,
+	      onEditChange = props.onEditChange,
+	      onEditBlur = props.onEditBlur,
+	      onEditKeyPressEnter = props.onEditKeyPressEnter,
+	      onEditKeyDownEsc = props.onEditKeyDownEsc;
+
+
+	  var handleToggleChange = function handleToggleChange() {
+	    return onToggleChange();
+	  };
+	  var handleLabelDoubleClick = function handleLabelDoubleClick() {
+	    return onLabelDoubleClick();
+	  };
+	  var handleDestroyClick = function handleDestroyClick() {
+	    return onDestroyClick();
+	  };
+	  var handleEditChange = function handleEditChange(event) {
+	    return onEditChange(event.target.value);
+	  };
+	  var handleEditBlur = function handleEditBlur() {
+	    return onEditBlur();
+	  };
+
+	  var handleEditKeyPress = function handleEditKeyPress(event) {
+	    if (event.which === keys.ENTER_KEY) {
+	      onEditKeyPressEnter();
+	    }
+	  };
+
+	  var handleEditKeyDown = function handleEditKeyDown(event) {
+	    if (event.which === keys.ESC_KEY) {
+	      onEditKeyDownEsc();
+	    }
+	  };
+
+	  var classNames = [];
+	  if (completed) {
+	    classNames.push('completed');
+	  }
+	  if (completed && filter === 'active' || !completed && filter === 'completed') {
+	    classNames.push('hidden');
+	  }
+	  if (isEditing) {
+	    classNames.push('editing');
+	  }
+	  var className = classNames.join(' ');
+
+	  // The DOM events specific to an item.
+	  return _react2.default.createElement(
+	    'li',
+	    { className: className },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'view' },
+	      _react2.default.createElement('input', {
+	        className: 'toggle',
+	        type: 'checkbox',
+	        checked: completed,
+	        onChange: handleToggleChange
+	      }),
+	      _react2.default.createElement(
+	        'label',
+	        { onDoubleClick: handleLabelDoubleClick },
+	        title
+	      ),
+	      _react2.default.createElement('button', { className: 'destroy', onClick: handleDestroyClick })
+	    ),
+	    function () {
+	      if (isEditing) {
+	        return _react2.default.createElement('input', {
+	          className: 'edit',
+	          autoFocus: true,
+	          value: value,
+	          onChange: handleEditChange,
+	          onKeyPress: handleEditKeyPress,
+	          onKeyDown: handleEditKeyDown,
+	          onBlur: handleEditBlur
+	        });
+	      }
+	    }()
+	  );
+	};
+
+	exports.default = Todo;
+
+/***/ },
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";

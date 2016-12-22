@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import View from '../views/Todo';
 import {TodoFilter} from '../routers/router';
 import * as keys from '../constants/keys';
 
@@ -35,50 +36,22 @@ class Todo extends Component {
   }
 
   render() {
-    const title = this.props.model.get('title');
-    const completed = this.props.model.get('completed');
-
-    const classNames = [];
-    if (completed) {
-      classNames.push('completed');
-    }
-    if ((completed && TodoFilter === 'active') || (!completed && TodoFilter === 'completed')) {
-      classNames.push('hidden');
-    }
-    if (this.state.isEditing) {
-      classNames.push('editing');
-    }
-    const className = classNames.join(' ');
-
     // The DOM events specific to an item.
     return (
-      <li className={className}>
-        <div className="view">
-          <input
-            className="toggle"
-            type="checkbox"
-            checked={completed}
-            onChange={this.toggleCompleted}
-          />
-          <label onDoubleClick={this.edit}>{title}</label>
-          <button className="destroy" onClick={this.clear}></button>
-        </div>
-        {(() => {
-          if (this.state.isEditing) {
-            return (
-              <input
-                className="edit"
-                autoFocus={true}
-                value={this.state.value}
-                onChange={(e) => this.setState({value: e.target.value})}
-                onKeyPress={this.updateOnEnter}
-                onKeyDown={this.revertOnEscape}
-                onBlur={this.close}
-              />
-            );
-          }
-        })()}
-      </li>
+      <View
+        title={this.props.model.get('title')}
+        completed={this.props.model.get('completed')}
+        filter={TodoFilter}
+        isEditing={this.state.isEditing}
+        value={this.state.value}
+        onToggleChange={this.toggleCompleted}
+        onLabelDoubleClick={this.edit}
+        onDestroyClick={this.clear}
+        onEditChange={(value) => this.setState({value})}
+        onEditBlur={this.close}
+        onEditKeyPressEnter={this.updateOnEnter}
+        onEditKeyDownEsc={this.revertOnEscape}
+      />
     );
   }
 
@@ -116,21 +89,17 @@ class Todo extends Component {
   }
 
   // If you hit `enter`, we're through editing the item.
-  updateOnEnter(e) {
-    if (e.which === keys.ENTER_KEY) {
-      this.close();
-    }
+  updateOnEnter() {
+    this.close();
   }
 
   // If you're pressing `escape` we revert your change by simply leaving
   // the `editing` state.
-  revertOnEscape(e) {
-    if (e.which === keys.ESC_KEY) {
-      this.setState({
-        isEditing: false,
-        value: this.props.model.get('title'),
-      });
-    }
+  revertOnEscape() {
+    this.setState({
+      isEditing: false,
+      value: this.props.model.get('title'),
+    });
   }
 
   // Remove the item, destroy the model from *localStorage* and delete its view.

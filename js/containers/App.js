@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import Stats from './Stats';
-import Todo from './Todo';
+import View from '../views/App';
 import {todos} from '../collections/todos';
-import * as keys from '../constants/keys';
 
 class App extends Component {
 
@@ -49,43 +47,14 @@ class App extends Component {
 
     // Delegated events for creating new items, and clearing completed ones.
     return (
-      <div>
-        <header className="header">
-          <h1>todos</h1>
-          <input
-            className="new-todo"
-            placeholder="What needs to be done?"
-            autoFocus={true}
-            value={this.state.value}
-            onChange={(e) => this.setState({value: e.target.value})}
-            onKeyPress={this.createOnEnter}
-          />
-        </header>
-        {(() => {
-          if (todos.length > 0) {
-            return (
-              <div>
-                <section className="main">
-                  <input
-                    className="toggle-all"
-                    id="toggle-all"
-                    type="checkbox"
-                    checked={checked}
-                    onChange={this.toggleAllComplete}
-                  />
-                  <label htmlFor="toggle-all">Mark all as complete</label>
-                  <ul className="todo-list">
-                    {todos.map((todo) => <Todo key={todo.cid} model={todo} />)}
-                  </ul>
-                </section>
-                <footer className="footer">
-                  <Stats todos={todos} />
-                </footer>
-              </div>
-            );
-          }
-        })()}
-      </div>
+      <View
+        todos={todos}
+        value={this.state.value}
+        checked={checked}
+        onNewTodoChange={(value) => this.setState({value})}
+        onNewTodoKeyPressEnter={this.createOnEnter}
+        onToggleAllChange={this.toggleAllComplete}
+      />
     );
   }
 
@@ -116,11 +85,9 @@ class App extends Component {
 
   // If you hit return in the main input field, create new **Todo** model,
   // persisting it to *localStorage*.
-  createOnEnter(e) {
-    if (e.which === keys.ENTER_KEY && this.state.value.trim()) {
-      todos.create(this.newAttributes());
-      this.setState({value: ''});
-    }
+  createOnEnter() {
+    todos.create(this.newAttributes());
+    this.setState({value: ''});
   }
 
   toggleAllComplete() {
