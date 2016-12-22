@@ -1,12 +1,9 @@
-/*global $ */
-/*jshint unused:false */
-var app = app || {};
-var ENTER_KEY = 13;
-var ESC_KEY = 27;
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/App';
 
-$(function () {
-	'use strict';
-
-	// kick things off by creating the `App`
-	new app.AppView();
-});
+// kick things off by creating the `App`
+ReactDOM.render(
+	<App />,
+	document.getElementsByClassName('todoapp')[0]
+);
