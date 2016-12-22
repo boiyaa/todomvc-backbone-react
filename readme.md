@@ -1,3 +1,3 @@
-# Backbone.js TodoMVC Example
+# Backbone.js + React TodoMVC Example Part1
 
-Import from [tastejs/todomvc](https://github.com/tastejs/todomvc/tree/master/examples/backbone)
+Replace Backbone Templates with React Components (without ES6, JSX)

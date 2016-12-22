@@ -14,9 +14,6 @@ var app = app || {};
 		// the App already present in the HTML.
 		el: '.todoapp',
 
-		// Our template for the line of statistics at the bottom of the app.
-		statsTemplate: _.template($('#stats-template').html()),
-
 		// Delegated events for creating new items, and clearing completed ones.
 		events: {
 			'keypress .new-todo': 'createOnEnter',
@@ -56,10 +53,13 @@ var app = app || {};
 				this.$main.show();
 				this.$footer.show();
 
-				this.$footer.html(this.statsTemplate({
-					completed: completed,
-					remaining: remaining
-				}));
+				ReactDOM.render(
+					React.createElement(Stats, {
+						completed: completed,
+						remaining: remaining
+					}, null),
+					this.$footer.get(0)
+				);
 
 				this.$('.filters li a')
 					.removeClass('selected')
